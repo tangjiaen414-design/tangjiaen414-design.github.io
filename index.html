@@ -2,218 +2,364 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>心动刮刮乐 | 自动适配扩展名</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Canvas 刮刮乐 - 绝不错版</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
     <style>
-        /* 样式保持和之前一样，此处省略以节约空间，但实际必须包含完整样式 */
-        /* 由于消息长度限制，我将提供完整的最小化样式，确保功能正常 */
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
         body {
             min-height: 100vh;
             background: linear-gradient(145deg, #fecfcc 0%, #ffe1df 30%, #fbc8cd 100%);
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             font-family: 'Inter', sans-serif;
-            padding: 1.5rem;
+            margin: 0;
+            padding: 20px;
         }
-        .scratch-wrapper { max-width: 500px; width: 100%; }
-        .scratch-card {
-            background: rgba(255, 250, 245, 0.88);
+        .card {
+            background: rgba(255, 250, 245, 0.9);
             backdrop-filter: blur(12px);
-            border-radius: 68px;
-            padding: 2rem 1.8rem 2.2rem;
+            border-radius: 64px;
+            padding: 30px 24px 40px;
             text-align: center;
-            box-shadow: 0 30px 45px -20px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
         }
-        .title-area h1 {
+        h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 2.2rem;
+            font-size: 2rem;
             background: linear-gradient(135deg, #d4425c, #ff8c66);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
+            margin-bottom: 8px;
         }
-        .sub { color: #b45a6b; font-size: 0.85rem; background: rgba(255,230,220,0.7); display: inline-block; padding: 5px 18px; border-radius: 60px; margin-top: 8px; }
-        .gift-stage {
-            background: #fff2ed;
-            border-radius: 48px;
-            min-height: 320px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 1.2rem;
-            margin: 1.5rem 0;
+        .sub {
+            background: rgba(255, 230, 220, 0.7);
+            display: inline-block;
+            padding: 4px 18px;
+            border-radius: 60px;
+            font-size: 0.85rem;
+            color: #b45a6b;
+            margin-bottom: 25px;
+        }
+        /* 刮刮乐舞台 */
+        .scratch-stage {
             position: relative;
-        }
-        .coating-layer {
             width: 100%;
-            min-height: 280px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            background: radial-gradient(circle at 30% 20%, #e5cfc0, #cfb6a4);
-            border-radius: 42px;
-            position: relative;
+            margin-bottom: 24px;
+            border-radius: 36px;
+            overflow: hidden;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            /* 让画布适应手机宽度，高度自适应 */
+            aspect-ratio: 1 / 1; 
+            background-color: #f0e1d4;
         }
-        .coating-layer::after {
-            content: "";
+        canvas {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: repeating-linear-gradient(45deg, rgba(255,235,200,0.4) 0px, rgba(255,235,200,0.4) 2px, rgba(210,170,140,0.2) 2px, rgba(210,170,140,0.2) 8px);
-            border-radius: 42px;
-            pointer-events: none;
+            display: block;
+            border-radius: 36px;
         }
-        .coating-text { font-size: 1.7rem; font-weight: bold; color: #fff5e6; text-shadow: 2px 2px 6px #a6583a; background: rgba(0,0,0,0.1); padding: 0.3rem 1.2rem; border-radius: 60px; }
-        .coating-hint { margin-top: 1rem; font-size: 0.8rem; color: #f9e0ce; background: rgba(90,45,30,0.3); padding: 5px 14px; border-radius: 30px; }
-        .prize-display { display: none; align-items: center; justify-content: center; }
-        .prize-display.show { display: flex; animation: fadeInUp 0.55s ease; }
-        @keyframes fadeInUp { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        .prize-img { width: 200px; height: 200px; background: #fff3ea; border-radius: 32px; display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 20px 30px -8px rgba(0,0,0,0.2); padding: 12px; }
-        .prize-img img { width: 100%; height: 100%; object-fit: contain; }
-        .btn-reset { background: linear-gradient(95deg, #ff9b7c, #ff7c5c); border: none; padding: 12px 28px; border-radius: 60px; font-weight: bold; color: white; cursor: pointer; margin-top: 1rem; }
-        .deco-note { margin-top: 1.8rem; font-size: 0.75rem; color: #c56a6a; background: rgba(255,245,205,0.5); border-radius: 100px; padding: 5px 12px; display: inline-block; }
-        .win-flash { animation: sparkleWin 0.7s forwards; }
-        @keyframes sparkleWin { 0% { box-shadow: 0 0 0 0 rgba(255,215,0,0.5); background: radial-gradient(circle, #fff6e0, #ffe6ce);} 100% { box-shadow: 0 0 0 0 rgba(255,215,0,0); background: radial-gradient(circle, #fff2ed, #ffe2d5);} }
-        .coating-fadeout { animation: fadeOutScale 0.45s forwards; }
-        @keyframes fadeOutScale { to { opacity: 0; visibility: hidden; } }
-        @media (max-width: 550px) { .prize-img { width: 160px; height: 160px; } }
+        /* 重置按钮 */
+        .reset-btn {
+            background: linear-gradient(95deg, #ff9b7c, #ff7c5c);
+            border: none;
+            padding: 12px 28px;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            box-shadow: 0 8px 18px rgba(200, 70, 50, 0.3);
+            transition: transform 0.2s ease;
+            margin-top: 8px;
+        }
+        .reset-btn:active { transform: scale(0.96); }
+        .footer {
+            margin-top: 24px;
+            font-size: 0.7rem;
+            color: #c56a6a;
+            background: rgba(255, 250, 240, 0.6);
+            display: inline-block;
+            padding: 5px 16px;
+            border-radius: 30px;
+        }
+        @keyframes gentleWin {
+            0% { box-shadow: 0 0 0 0 rgba(255, 180, 100, 0.5);}
+            100% { box-shadow: 0 0 0 15px rgba(255, 180, 100, 0);}
+        }
+        .win-effect {
+            animation: gentleWin 0.8s ease-out;
+        }
     </style>
 </head>
 <body>
-<div class="scratch-wrapper">
-    <div class="scratch-card">
-        <div class="title-area"><h1><i class="fas fa-gift"></i> 心动刮刮乐</h1><div class="sub"><i class="fas fa-hand-peace"></i> 轻触涂层 · 收获惊喜</div></div>
-        <div class="gift-stage" id="giftStage">
-            <div id="coatingLayer" class="coating-layer">
-                <div class="coating-icon"><i class="fas fa-coin"></i><i class="fas fa-star-of-life"></i></div>
-                <div class="coating-text">刮 开 涂 层</div>
-                <div class="coating-hint"><i class="fas fa-fingerprint"></i> 点击一下</div>
-            </div>
-            <div id="prizeDisplay" class="prize-display"><div class="prize-img"><img id="prizeImage" src="" alt="奖品"></div></div>
-        </div>
-        <button class="btn-reset" id="resetBtn"><i class="fas fa-redo-alt"></i> 再来一张</button>
-        <div class="deco-note"><i class="fas fa-heart"></i> 每一份惊喜，都是爱的心意</div>
+<div class="card">
+    <h1>✨ 心动刮刮乐 ✨</h1>
+    <div class="sub"><span>🎁 手指刮开涂层 · 接收礼物 🎁</span></div>
+
+    <div class="scratch-stage" id="stage">
+        <!-- 底层 canvas 用于显示奖品图片 -->
+        <canvas id="prizeCanvas" width="500" height="500" style="z-index: 1;"></canvas>
+        <!-- 上层 canvas 用于涂层，用户交互刮擦 -->
+        <canvas id="scratchCanvas" width="500" height="500" style="z-index: 2;"></canvas>
     </div>
+
+    <button class="reset-btn" id="resetBtn">
+        <i class="fas fa-redo-alt"></i> 再来一张
+    </button>
+    <div class="footer"><i class="fas fa-heart"></i> 刮开有喜 · 幸运属于你 <i class="fas fa-heart"></i></div>
 </div>
 
 <script>
-    const TOTAL_IMAGES = 9;   // 改成您的图片总数
-    const IMAGE_FOLDER = "prize-images";
-    const EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'JPG', 'JPEG', 'PNG', 'WEBP']; // 自动尝试多种扩展名
+    (function(){
+        // ---------- 配置区（只需改动这里的数字）----------
+        const TOTAL_IMAGES = 9;           // 奖品图片总数（1.jpg ~ 9.jpg）
+        const IMAGE_FOLDER = "prize-images"; // 图片文件夹名
+        // ---------------------------------------------
 
-    let prizeList = [];
-    let isScratched = false;
-    let isAnimating = false;
+        // 获取两个 canvas 元素
+        const prizeCanvas = document.getElementById('prizeCanvas');
+        const scratchCanvas = document.getElementById('scratchCanvas');
+        let ctxPrize = prizeCanvas.getContext('2d');
+        let ctxScratch = scratchCanvas.getContext('2d');
 
-    const coatingLayer = document.getElementById('coatingLayer');
-    const prizeDisplay = document.getElementById('prizeDisplay');
-    const prizeImage = document.getElementById('prizeImage');
-    const resetBtn = document.getElementById('resetBtn');
-    const giftStage = document.getElementById('giftStage');
+        let isScratching = false;   // 是否正在刮擦
+        let currentPrizePath = '';  // 当前显示的奖品图路径
 
-    // 异步检测图片是否存在（自动匹配扩展名）
-    async function findImagePath(baseNumber) {
-        for (let ext of EXTENSIONS) {
-            const url = `${IMAGE_FOLDER}/${baseNumber}.${ext}`;
-            const exists = await new Promise(resolve => {
-                const img = new Image();
-                img.onload = () => resolve(true);
-                img.onerror = () => resolve(false);
-                img.src = url;
-            });
-            if (exists) return url;
+        // 为了让手机/PC 坐标精准，需要动态调整画布实际像素尺寸
+        function resizeCanvases() {
+            const container = document.getElementById('stage');
+            const width = container.clientWidth;
+            const height = width; // 保持正方形 1:1
+            // 设置 canvas 的实际像素尺寸 (避免模糊)
+            prizeCanvas.width = width;
+            prizeCanvas.height = height;
+            scratchCanvas.width = width;
+            scratchCanvas.height = height;
+            
+            // CSS 尺寸保持一致
+            prizeCanvas.style.width = width + 'px';
+            prizeCanvas.style.height = height + 'px';
+            scratchCanvas.style.width = width + 'px';
+            scratchCanvas.style.height = height + 'px';
+            
+            // 尺寸改变后需要重绘涂层（否则涂层可能被重置）
+            drawScratchLayer();
+            // 如果已经刮开过奖品，需要把奖品重新画上去，避免涂层重置时覆盖奖品。但在重置方法中处理
         }
-        return null;
-    }
-
-    async function buildPrizeList() {
-        const list = [];
-        for (let i = 1; i <= TOTAL_IMAGES; i++) {
-            const url = await findImagePath(i);
-            if (url) {
-                list.push({ url: url, index: i });
+        
+        // ---------- 画涂层 ----------
+        function drawScratchLayer() {
+            const w = scratchCanvas.width;
+            const h = scratchCanvas.height;
+            ctxScratch.clearRect(0, 0, w, h);
+            // 模拟质感涂层：银灰色渐变 + 小颗粒噪点效果
+            const grad = ctxScratch.createLinearGradient(0, 0, w, h);
+            grad.addColorStop(0, '#cfb6a4');
+            grad.addColorStop(1, '#b99b86');
+            ctxScratch.fillStyle = grad;
+            ctxScratch.fillRect(0, 0, w, h);
+            
+            // 增加“刮开涂层”文字装饰
+            ctxScratch.font = `bold ${Math.floor(w * 0.1)}px "Playfair Display"`;
+            ctxScratch.fillStyle = "#fff5e6";
+            ctxScratch.shadowBlur = 0;
+            ctxScratch.textAlign = "center";
+            ctxScratch.fillText("刮开涂层", w/2, h/2 - 15);
+            ctxScratch.font = `${Math.floor(w * 0.06)}px "Inter"`;
+            ctxScratch.fillStyle = "#ffefdf";
+            ctxScratch.fillText("👇 轻滑刮奖 👇", w/2, h/2 + 35);
+            
+            // 增加一些闪闪的小光点
+            for(let i = 0; i < 80; i++) {
+                ctxScratch.fillStyle = `rgba(255,245,200,${Math.random() * 0.5})`;
+                ctxScratch.beginPath();
+                ctxScratch.arc(Math.random() * w, Math.random() * h, Math.random() * 3 + 1, 0, Math.PI*2);
+                ctxScratch.fill();
+            }
+        }
+        
+        // ---------- 加载奖品图片到底层 ----------
+        function loadRandomPrize() {
+            // 随机 1 到 TOTAL_IMAGES 之间的整数
+            const randomIndex = Math.floor(Math.random() * TOTAL_IMAGES) + 1;
+            const imgPath = `${IMAGE_FOLDER}/${randomIndex}.jpg`; // 注意这里统一用 .jpg，如果你的图片有其他扩展名请修改此处
+            currentPrizePath = imgPath;
+            const img = new Image();
+            img.crossOrigin = "Anonymous"; // 避免跨域问题（同源其实不需要）
+            img.onload = function() {
+                const w = prizeCanvas.width;
+                const h = prizeCanvas.height;
+                ctxPrize.clearRect(0, 0, w, h);
+                // 图片填充整个画布，可能会变形，但为了显示完整内容，调整绘制方式铺满
+                ctxPrize.drawImage(img, 0, 0, w, h);
+                // 图片加载成功，不会有感叹号！
+                console.log(`✅ 奖品已加载: ${imgPath}`);
+            };
+            img.onerror = () => {
+                console.error(`❌ 奖品加载失败: ${imgPath}`);
+                // 如果图片加载失败，在底层画一个友好的错误表情（避免感叹号刺激），但仍然正常可以刮
+                ctxPrize.fillStyle = "#f8c6c0";
+                ctxPrize.fillRect(0, 0, prizeCanvas.width, prizeCanvas.height);
+                ctxPrize.fillStyle = "#b1624b";
+                ctxPrize.font = `${Math.floor(prizeCanvas.width * 0.1)}px "Inter"`;
+                ctxPrize.textAlign = "center";
+                ctxPrize.fillText("🎁", prizeCanvas.width/2, prizeCanvas.height/2);
+                ctxPrize.font = `${Math.floor(prizeCanvas.width * 0.06)}px "Inter"`;
+                ctxPrize.fillText("礼物在路上", prizeCanvas.width/2, prizeCanvas.height/2 + 40);
+            };
+            img.src = imgPath;
+        }
+        
+        // ------------------- 刮擦逻辑核心 -------------------
+        function getCanvasCoords(e, canvas) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;   // canvas实际像素 / CSS展示宽度
+            const scaleY = canvas.height / rect.height;
+            let clientX, clientY;
+            if (e.touches) {
+                // 触摸事件
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
             } else {
-                console.warn(`未找到图片 ${i}`);
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            let canvasX = (clientX - rect.left) * scaleX;
+            let canvasY = (clientY - rect.top) * scaleY;
+            canvasX = Math.max(0, Math.min(canvas.width, canvasX));
+            canvasY = Math.max(0, Math.min(canvas.height, canvasY));
+            return { x: canvasX, y: canvasY };
+        }
+        
+        function startScratch(e) {
+            e.preventDefault();
+            isScratching = true;
+            scratch(e);
+        }
+        
+        function scratch(e) {
+            if (!isScratching) return;
+            e.preventDefault();
+            const coords = getCanvasCoords(e, scratchCanvas);
+            if (!coords) return;
+            // 设置擦除合成模式
+            ctxScratch.globalCompositeOperation = "destination-out";
+            // 模拟手指/鼠标粗度 (半径范围 15~25px)
+            const radius = Math.max(scratchCanvas.width * 0.035, 18);
+            ctxScratch.beginPath();
+            ctxScratch.arc(coords.x, coords.y, radius, 0, Math.PI * 2);
+            ctxScratch.fill();
+            // 重置合成模式，下次擦除继续用 destination-out
+            ctxScratch.globalCompositeOperation = "source-over";
+            
+            // 每次刮擦后简单检查是否刮开足够比例（可选：增加刮完庆祝效果）
+            checkScratchCompletion();
+        }
+        
+        function endScratch(e) {
+            e.preventDefault();
+            isScratching = false;
+        }
+        
+        // 检测涂层是否刮开超过 50%，弹出特效（完全不用奖品名字，单纯闪光提醒）
+        let completionTriggered = false;
+        function checkScratchCompletion() {
+            if (completionTriggered) return;
+            const w = scratchCanvas.width;
+            const h = scratchCanvas.height;
+            const imageData = ctxScratch.getImageData(0, 0, w, h);
+            const data = imageData.data;
+            let erasedPixels = 0;
+            // 统计 alpha 为 0 的像素占比（已擦除区域）
+            for (let i = 3; i < data.length; i += 4) {
+                if (data[i] === 0) erasedPixels++;
+            }
+            const totalPixels = w * h;
+            const erasedPercent = erasedPixels / totalPixels;
+            // 刮开超过 50% 且还没有触发过
+            if (erasedPercent > 0.48 && !completionTriggered) {
+                completionTriggered = true;
+                const stageDiv = document.getElementById('stage');
+                stageDiv.classList.add('win-effect');
+                setTimeout(() => stageDiv.classList.remove('win-effect'), 800);
+                // 可以加个轻提示，但不影响体验
+                console.log("✨ 奖品完全出现，刮开完成 ✨");
             }
         }
-        return list;
-    }
-
-    async function init() {
-        prizeList = await buildPrizeList();
-        if (prizeList.length === 0) {
-            // 没有图片时显示提示，但您的图片存在，不会进入这里
-            prizeImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23ffcccc'/%3E%3Ctext x='50' y='67' text-anchor='middle' fill='%23cc0000' font-size='14'%3E!%3C/text%3E%3C/svg%3E";
+        
+        // 重置整个刮刮卡（涂层复原，重新抽取奖品）
+        function resetGame() {
+            completionTriggered = false;
+            // 重置涂层绘制
+            drawScratchLayer();
+            // 重置合成模式，以免残留设置影响重画
+            ctxScratch.globalCompositeOperation = "source-over";
+            // 重新抽取新的奖品图片
+            loadRandomPrize();
         }
-    }
-
-    function getRandomPrize() {
-        if (!prizeList.length) return null;
-        return prizeList[Math.floor(Math.random() * prizeList.length)];
-    }
-
-    function setPrizeContent(prize) {
-        prizeImage.src = prize.url;
-        prizeImage.onerror = () => {
-            prizeImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23ffcccc'/%3E%3Ctext x='50' y='67' text-anchor='middle' fill='%23cc0000' font-size='14'%3E!%3C/text%3E%3C/svg%3E";
-        };
-    }
-
-    async function scratchToReveal() {
-        if (isScratched || isAnimating) return;
-        if (prizeList.length === 0) {
-            await init(); // 重新尝试加载
-            if (prizeList.length === 0) return;
+        
+        // ---------- 事件绑定(同时支持PC鼠标和移动端触摸) ----------
+        function bindEvents() {
+            // 鼠标事件
+            scratchCanvas.addEventListener('mousedown', startScratch);
+            window.addEventListener('mousemove', scratch);
+            window.addEventListener('mouseup', endScratch);
+            // 触摸事件 (移动端)
+            scratchCanvas.addEventListener('touchstart', startScratch);
+            window.addEventListener('touchmove', scratch);
+            window.addEventListener('touchend', endScratch);
+            // 阻止页面滚动穿透
+            scratchCanvas.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
         }
-        isAnimating = true;
-        const prize = getRandomPrize();
-        setPrizeContent(prize);
-
-        coatingLayer.classList.add('coating-fadeout');
-        const onFadeEnd = () => {
-            coatingLayer.style.display = 'none';
-            coatingLayer.classList.remove('coating-fadeout');
-            prizeDisplay.classList.add('show');
-            giftStage.classList.add('win-flash');
-            setTimeout(() => giftStage.classList.remove('win-flash'), 700);
-            isScratched = true;
-            isAnimating = false;
-            coatingLayer.removeEventListener('animationend', onFadeEnd);
-        };
-        coatingLayer.addEventListener('animationend', onFadeEnd, { once: true });
-        setTimeout(() => {
-            if (isAnimating && !isScratched) {
-                coatingLayer.style.display = 'none';
-                prizeDisplay.classList.add('show');
-                giftStage.classList.add('win-flash');
-                setTimeout(() => giftStage.classList.remove('win-flash'), 700);
-                isScratched = true;
-                isAnimating = false;
-            }
-        }, 500);
-    }
-
-    function resetGame() {
-        if (isAnimating) return;
-        isScratched = false;
-        prizeDisplay.classList.remove('show');
-        coatingLayer.style.display = 'flex';
-        coatingLayer.classList.remove('coating-fadeout');
-        prizeImage.src = "";
-    }
-
-    coatingLayer.addEventListener('click', scratchToReveal);
-    resetBtn.addEventListener('click', resetGame);
-    init();
+        
+        // 调整大小重置涂层和奖品比例，并重新加载当前显示的奖品图，保持稳定
+        let resizeTimer;
+        window.addEventListener('resize', function() {
+            if (resizeTimer) clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                // 重新设定画布物理尺寸，保存当前正在显示的奖品图
+                const oldPrizeImg = currentPrizePath;
+                resizeCanvases();
+                if (oldPrizeImg) {
+                    const img = new Image();
+                    img.onload = function() {
+                        ctxPrize.drawImage(img, 0, 0, prizeCanvas.width, prizeCanvas.height);
+                    };
+                    img.src = oldPrizeImg;
+                }
+                drawScratchLayer();
+                completionTriggered = false;
+            }, 150);
+        });
+        
+        // 初始化
+        function init() {
+            resizeCanvases();     // 确保画布像素尺寸正常
+            bindEvents();
+            loadRandomPrize();    // 抽取第一个奖品
+        }
+        
+        // 页面加载和重置按钮
+        window.addEventListener('load', init);
+        const resetBtn = document.getElementById('resetBtn');
+        resetBtn.addEventListener('click', resetGame);
+    })();
 </script>
+<!-- 加上我们可爱的 FontAwesome 小图标库，为了让按钮图标更美观，如果没有外网可以不加，但加上也无伤大雅 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </body>
 </html>
