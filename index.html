@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>心动刮刮乐 | 自动识别奖品</title>
+    <title>心动刮刮乐 | 图片惊喜</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -58,7 +58,7 @@
             background: rgba(255, 250, 245, 0.88);
             backdrop-filter: blur(12px);
             border-radius: 68px;
-            box-shadow: 0 30px 45px -20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 245, 225, 0.7) inset, 0 0 0 2px rgba(255, 255, 255, 0.5);
+            box-shadow: 0 30px 45px -20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 245, 225, 0.7) inset;
             padding: 2rem 1.8rem 2.2rem;
             text-align: center;
         }
@@ -73,12 +73,14 @@
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
-            letter-spacing: -0.5px;
             display: inline-flex;
             align-items: center;
             gap: 8px;
         }
-        .title-area i { font-size: 1.8rem; color: #ff5e7e; }
+        .title-area i {
+            font-size: 1.8rem;
+            color: #ff5e7e;
+        }
         .sub {
             color: #b45a6b;
             font-weight: 500;
@@ -89,7 +91,9 @@
             border-radius: 60px;
             margin-top: 8px;
         }
-        .scratch-zone { margin: 0 0 1.5rem 0; perspective: 800px; }
+        .scratch-zone {
+            margin: 0 0 1.5rem 0;
+        }
         .gift-stage {
             background: #fff2ed;
             border-radius: 48px;
@@ -129,7 +133,9 @@
             border-radius: 42px;
             pointer-events: none;
         }
-        .coating-layer:active { transform: scale(0.98); }
+        .coating-layer:active {
+            transform: scale(0.98);
+        }
         .coating-icon {
             font-size: 3.6rem;
             color: #ffe1c6;
@@ -158,31 +164,28 @@
         }
         .prize-display {
             width: 100%;
-            display: flex;
-            flex-direction: column;
+            display: none;
             align-items: center;
             justify-content: center;
-            opacity: 0;
-            transform: scale(0.85) translateY(20px);
-            transition: opacity 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.2), transform 0.55s cubic-bezier(0.2, 0.85, 0.3, 1.2);
-            pointer-events: none;
         }
-        .prize-display.show-prize {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-            pointer-events: auto;
+        .prize-display.show {
+            display: flex;
+            animation: fadeInUp 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
         .prize-img {
-            width: 140px;
-            height: 140px;
+            width: 200px;
+            height: 200px;
             background: #fff3ea;
-            border-radius: 70px;
+            border-radius: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 1rem;
-            box-shadow: 0 20px 30px -8px rgba(0, 0, 0, 0.2);
             overflow: hidden;
+            box-shadow: 0 20px 30px -8px rgba(0, 0, 0, 0.2);
             padding: 12px;
         }
         .prize-img img {
@@ -191,25 +194,8 @@
             object-fit: contain;
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
         }
-        .prize-name {
-            font-size: 1.7rem;
-            font-weight: 800;
-            background: linear-gradient(125deg, #b84762, #ff9068);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            margin-bottom: 0.25rem;
-        }
-        .prize-message {
-            font-size: 0.85rem;
-            color: #ad6f66;
-            background: rgba(255,235,220,0.7);
-            padding: 4px 15px;
-            border-radius: 40px;
-            display: inline-block;
-        }
         .action-buttons {
-            margin-top: 1rem;
+            margin-top: 1.8rem;
             display: flex;
             justify-content: center;
             gap: 1.2rem;
@@ -217,7 +203,7 @@
         .btn-reset {
             background: linear-gradient(95deg, #ff9b7c, #ff7c5c);
             border: none;
-            padding: 12px 26px;
+            padding: 12px 28px;
             border-radius: 60px;
             font-weight: 700;
             font-size: 1rem;
@@ -230,7 +216,9 @@
             transition: all 0.25s ease;
             font-family: 'Inter', sans-serif;
         }
-        .btn-reset:active { transform: scale(0.95); }
+        .btn-reset:active {
+            transform: scale(0.95);
+        }
         .deco-note {
             margin-top: 1.8rem;
             font-size: 0.75rem;
@@ -240,24 +228,26 @@
             padding: 5px 12px;
             display: inline-block;
         }
+        .win-flash {
+            animation: sparkleWin 0.7s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+        }
         @keyframes sparkleWin {
             0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.5); background: radial-gradient(circle, #fff6e0, #ffe6ce);}
             50% { box-shadow: 0 0 0 12px rgba(255, 180, 70, 0.3); background: radial-gradient(circle, #fff0d0, #ffdbc2);}
             100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); background: radial-gradient(circle, #fff2ed, #ffe2d5);}
         }
-        .win-flash { animation: sparkleWin 0.7s cubic-bezier(0.2, 1, 0.3, 1) forwards; }
-        .coating-fadeout { animation: fadeOutScale 0.45s forwards !important; }
+        .coating-fadeout {
+            animation: fadeOutScale 0.45s forwards !important;
+        }
         @keyframes fadeOutScale {
             0% { opacity: 1; transform: scale(1); }
             100% { opacity: 0; transform: scale(0.7); visibility: hidden; }
         }
         @media (max-width: 550px) {
             .scratch-card { padding: 1.5rem 1rem; }
-            .prize-img { width: 115px; height: 115px; }
-            .coating-text { font-size: 1.4rem; }
-            .prize-name { font-size: 1.4rem; }
+            .prize-img { width: 160px; height: 160px; }
             .title-area h1 { font-size: 1.8rem; }
-            .btn-reset { padding: 10px 20px; font-size: 0.9rem; }
+            .coating-text { font-size: 1.4rem; }
         }
     </style>
 </head>
@@ -278,8 +268,6 @@
                 </div>
                 <div id="prizeDisplay" class="prize-display">
                     <div class="prize-img"><img id="prizeImage" src="" alt="惊喜奖品"></div>
-                    <div class="prize-name" id="prizeName">神秘大礼</div>
-                    <div class="prize-message" id="prizeDesc">❤️ 专属你的幸运 ❤️</div>
                 </div>
             </div>
         </div>
@@ -291,118 +279,51 @@
 </div>
 
 <script>
-    // ======================== 配置区（只需改这一个变量）========================
-    const IMAGE_FOLDER = "prize-images";   // 图片文件夹名称（可以改成你喜欢的，只改这一处）
-    // ========================================================================
+    // ======================== 配置区域 ========================
+    const TOTAL_IMAGES = 9;   // 改成您 prize-images 里的图片总数（1.jpg 到 TOTAL_IMAGES.jpg）
+    const IMAGE_FOLDER = "prize-images";
+    // ========================================================
 
-    // 自动探测图片总数，并生成奖品列表（用户完全不用手动维护）
-    async function fetchAllPrizes() {
-        let index = 1;
-        const prizes = [];
-        // 常见图片扩展名
-        const extensions = ['png', 'jpg', 'jpeg', 'webp'];
-        
-        while (true) {
-            let found = false;
-            for (let ext of extensions) {
-                // 先尝试纯数字文件名： 1.png, 2.jpg ... 
-                let url = `${IMAGE_FOLDER}/${index}.${ext}`;
-                let exists = await checkImageExists(url);
-                if (exists) {
-                    // 提取奖品名称：没有额外文字就用默认
-                    let prizeName = `惊喜礼物 ${index}`;
-                    prizes.push({ img: `${index}.${ext}`, name: prizeName, desc: "❤️ 好运降临 ❤️" });
-                    found = true;
-                    break;
-                }
-                // 再尝试 数字-名称.扩展名 或 数字_名称.扩展名 格式
-                // 我们无法预知名称，所以这里先不动态提取，这是简化版；但可以支持带名字的自动解析
-                // 为了方便，针对有意义的文件名，我们采用另一种方式：如果文件名包含“-”或“_”，则解析出后半部分
-                // 但由于我们无法列出文件夹，这种需要服务器端，所以放弃。除非用户按纯数字命名，我们给出默认名称。
-                // 为了更好的体验，用户可以手动在文件名中加入名称，但为了不改代码，我们不做强制。
-                // 下面提供高级自动名称提取：通过尝试请求一个假设的文件名，但不知道具体名称。所以最终建议纯数字命名，然后自定义奖品名称在JS里？
-                // 但是用户要求不改代码，那么我们就用"惊喜礼物X"作为名字，足够简单。
-            }
-            if (!found) {
-                // 尝试 index 前面加0？不做了
-                break;
-            }
-            index++;
-        }
-        if (prizes.length === 0) {
-            // 一张图片都没找到，给个默认示例（提示用户放图片）
-            console.warn("未在", IMAGE_FOLDER, "中找到任何以数字命名的图片（1.png,2.jpg...）");
-            // 降级显示一个占位提示
-            prizes.push({ img: "", name: "✨ 请放入奖品图片 ✨", desc: `将图片按1.png,2.jpg...放入 ${IMAGE_FOLDER} 文件夹` });
-        }
-        return prizes;
+    // 直接生成图片列表（不依赖异步检测）
+    const prizeList = [];
+    for (let i = 1; i <= TOTAL_IMAGES; i++) {
+        prizeList.push({ img: `${i}.jpg` });
     }
 
-    function checkImageExists(url) {
-        return new Promise((resolve) => {
-            const img = new Image();
-            img.onload = () => resolve(true);
-            img.onerror = () => resolve(false);
-            img.src = url;
-        });
-    }
-
-    // 缓存奖品列表
-    let prizeList = [];
     let isScratched = false;
     let isAnimating = false;
-    let currentPrize = null;
 
     const coatingLayer = document.getElementById('coatingLayer');
     const prizeDisplay = document.getElementById('prizeDisplay');
     const prizeImage = document.getElementById('prizeImage');
-    const prizeNameSpan = document.getElementById('prizeName');
-    const prizeDescSpan = document.getElementById('prizeDesc');
     const resetBtn = document.getElementById('resetBtn');
     const giftStage = document.getElementById('giftStage');
 
-    // 随机抽取奖品
     function getRandomPrize() {
-        if (!prizeList.length) return { img: "", name: "暂无奖品", desc: "请添加图片" };
         const randomIndex = Math.floor(Math.random() * prizeList.length);
-        return { ...prizeList[randomIndex] };
+        return prizeList[randomIndex];
     }
 
     function setPrizeContent(prize) {
-        if (!prize.img) {
-            prizeImage.src = "";
-            prizeNameSpan.innerText = prize.name;
-            prizeDescSpan.innerText = prize.desc;
-            return;
-        }
         const imgPath = `${IMAGE_FOLDER}/${prize.img}`;
         prizeImage.src = imgPath;
-        prizeImage.alt = prize.name;
-        prizeNameSpan.innerText = prize.name;
-        prizeDescSpan.innerText = prize.desc;
+        // 如果图片加载失败，显示错误图标（但您的图片正常，不会触发）
         prizeImage.onerror = () => {
-            prizeImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23ffcdb0'/%3E%3Ctext x='50' y='67' text-anchor='middle' fill='%23944d3a' font-size='14'%3E?%3C/text%3E%3C/svg%3E";
-            prizeNameSpan.innerText = "图片丢失";
+            prizeImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23ffcccc'/%3E%3Ctext x='50' y='67' text-anchor='middle' fill='%23cc0000' font-size='14'%3E!%3C/text%3E%3C/svg%3E";
         };
     }
 
-    async function scratchToReveal() {
+    function scratchToReveal() {
         if (isScratched || isAnimating) return;
-        if (prizeList.length === 0) {
-            // 未加载完或没有奖品，提示等待
-            alert("奖品加载中，请稍后...");
-            return;
-        }
         isAnimating = true;
-        const newPrize = getRandomPrize();
-        currentPrize = newPrize;
-        setPrizeContent(currentPrize);
+        const prize = getRandomPrize();
+        setPrizeContent(prize);
 
         coatingLayer.classList.add('coating-fadeout');
         const onFadeEnd = () => {
             coatingLayer.style.display = 'none';
             coatingLayer.classList.remove('coating-fadeout');
-            prizeDisplay.classList.add('show-prize');
+            prizeDisplay.classList.add('show');
             giftStage.classList.add('win-flash');
             setTimeout(() => giftStage.classList.remove('win-flash'), 700);
             isScratched = true;
@@ -410,10 +331,11 @@
             coatingLayer.removeEventListener('animationend', onFadeEnd);
         };
         coatingLayer.addEventListener('animationend', onFadeEnd, { once: true });
+        // 后备定时器
         setTimeout(() => {
             if (isAnimating && !isScratched) {
-                if (coatingLayer.style.display !== 'none') coatingLayer.style.display = 'none';
-                prizeDisplay.classList.add('show-prize');
+                coatingLayer.style.display = 'none';
+                prizeDisplay.classList.add('show');
                 giftStage.classList.add('win-flash');
                 setTimeout(() => giftStage.classList.remove('win-flash'), 700);
                 isScratched = true;
@@ -425,28 +347,15 @@
     function resetGame() {
         if (isAnimating) return;
         isScratched = false;
-        prizeDisplay.classList.remove('show-prize');
+        prizeDisplay.classList.remove('show');
         coatingLayer.style.display = 'flex';
         coatingLayer.classList.remove('coating-fadeout');
         prizeImage.src = "";
-        prizeNameSpan.innerText = "神秘大礼";
-        prizeDescSpan.innerText = "❤️ 专属你的幸运 ❤️";
         void coatingLayer.offsetHeight;
     }
 
-    // 初始化加载奖品列表
-    async function init() {
-        prizeList = await fetchAllPrizes();
-        console.log(`🎁 共加载 ${prizeList.length} 个奖品`, prizeList);
-        if (prizeList.length === 0) {
-            // 提示用户建立文件夹并放图片
-            prizeNameSpan.innerText = "🤗 提示";
-            prizeDescSpan.innerText = `请将图片 (1.png,2.jpg...) 放入 ${IMAGE_FOLDER} 文件夹`;
-        }
-        coatingLayer.addEventListener('click', scratchToReveal);
-        resetBtn.addEventListener('click', resetGame);
-    }
-    init();
+    coatingLayer.addEventListener('click', scratchToReveal);
+    resetBtn.addEventListener('click', resetGame);
 
     // 背景粒子效果
     function createParticles() {
