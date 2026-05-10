@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>致母亲 · 母亲节快乐</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none; /* 让文字复制正常，不影响体验 */
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #fff5f0 0%, #ffe6de 100%);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 飘落花瓣背景 (Canvas 动态生成) */
+        .petal-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 主卡片 */
+        .card {
+            position: relative;
+            z-index: 10;
+            max-width: 550px;
+            width: 100%;
+            background: rgba(255, 248, 245, 0.88);
+            backdrop-filter: blur(12px);
+            border-radius: 64px;
+            box-shadow: 0 30px 45px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 240, 230, 0.8) inset;
+            padding: 2.2rem 1.8rem 2.5rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+            animation: cardFloat 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        @keyframes cardFloat {
+            0% {
+                opacity: 0;
+                transform: translateY(40px) scale(0.96);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* 装饰小花藤 */
+        .flower-decoration {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .flower-decoration i {
+            font-size: 1.8rem;
+            color: #f7a1c4;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+            animation: gentleWave 2.5s infinite ease-in-out;
+        }
+        .flower-decoration i:nth-child(2) {
+            animation-delay: 0.3s;
+            color: #f5b0a3;
+        }
+        .flower-decoration i:nth-child(3) {
+            animation-delay: 0.6s;
+            color: #ffb88c;
+        }
+        @keyframes gentleWave {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+
+        /* 主标题 */
+        .greeting {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #cb6e6e, #f5a97f);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
+        }
+
+        .sub {
+            font-size: 1rem;
+            color: #c0775e;
+            background: rgba(255, 235, 220, 0.7);
+            display: inline-block;
+            padding: 4px 18px;
+            border-radius: 60px;
+            margin-bottom: 1.6rem;
+            font-weight: 500;
+        }
+
+        /* 手写风格祝福语 */
+        .message-box {
+            background: rgba(255, 245, 235, 0.7);
+            border-radius: 48px;
+            padding: 1.6rem 1.2rem;
+            margin: 0.8rem 0 1.5rem;
+            border: 1px solid rgba(255, 215, 190, 0.9);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.03);
+        }
+
+        .message {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            line-height: 1.65;
+            color: #5e3a2e;
+            font-style: italic;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        .message i {
+            color: #e67a5c;
+            margin: 0 4px;
+        }
+
+        /* 爱心分割 */
+        .heart-divider {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 18px 0;
+            color: #f3a683;
+            font-size: 1.2rem;
+        }
+
+        /* 特别祝愿板块 */
+        .wishes {
+            background: rgba(255, 250, 240, 0.7);
+            border-radius: 40px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .wish-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 12px 0;
+            font-size: 0.95rem;
+            color: #8b5a48;
+            font-weight: 500;
+        }
+        .wish-item i {
+            width: 28px;
+            text-align: center;
+            color: #e9856b;
+            font-size: 1.1rem;
+        }
+
+        /* 妈妈的名字可自定义 */
+        .mom-name {
+            font-weight: 700;
+            color: #c95f46;
+            font-size: 1.1rem;
+            background: rgba(255, 220, 200, 0.5);
+            display: inline-block;
+            padding: 3px 16px;
+            border-radius: 40px;
+            margin-top: 8px;
+        }
+
+        /* 底部签名与按钮 */
+        .footer-note {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-size: 0.75rem;
+            color: #c08168;
+            border-top: 1px solid rgba(230, 170, 140, 0.4);
+            padding-top: 1.3rem;
+        }
+
+        .btn-play {
+            background: #ffdad0;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            color: #bc5f42;
+            font-weight: 600;
+            font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .btn-play:active {
+            transform: scale(0.96);
+            background: #ffcabb;
+        }
+
+        /* 祝福标签小彩蛋 */
+        .floating-message {
+            position: fixed;
+            pointer-events: none;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: #f58f70;
+            text-shadow: 0 0 4px white;
+            z-index: 200;
+            opacity: 0;
+            transition: opacity 0.4s;
+            font-weight: 500;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 550px) {
+            .card {
+                padding: 1.8rem 1.2rem;
+            }
+            .greeting {
+                font-size: 2.2rem;
+            }
+            .message {
+                font-size: 1rem;
+            }
+            .wish-item {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="petalCanvas" class="petal-canvas"></canvas>
+
+<div class="card">
+    <div class="flower-decoration">
+        <i class="fas fa-seedling"></i>
+        <i class="fas fa-leaf"></i>
+        <i class="fas fa-feather-alt"></i>
+    </div>
+    <div class="greeting">
+        母亲节快乐
+    </div>
+    <div class="sub">
+        🌸 致我最亲爱的妈妈 🌸
+    </div>
+
+    <div class="message-box">
+        <div class="message">
+            “ 世界上的一切光荣和骄傲，都来自母亲。<br>
+            愿时光慢些，愿您笑颜常在，<br>
+            您是我生命里最温柔的星光。 ”
+        </div>
+        <div class="mom-name" id="momNameDisplay">✨ 我最爱的妈妈 ✨</div>
+    </div>
+
+    <div class="heart-divider">
+        <i class="fas fa-heart"></i> <i class="fas fa-heart"></i> <i class="fas fa-heart"></i>
+    </div>
+
+    <div class="wishes">
+        <div class="wish-item">
+            <i class="fas fa-sun"></i> <span>愿您每一天都健康明朗，笑容灿烂</span>
+        </div>
+        <div class="wish-item">
+            <i class="fas fa-mug-hot"></i> <span>愿您烦恼全消，被温暖与爱意拥抱</span>
+        </div>
+        <div class="wish-item">
+            <i class="fas fa-hands-clapping"></i> <span>感谢您碎碎念念，温暖我的岁岁年年</span>
+        </div>
+        <div class="wish-item">
+            <i class="fas fa-infinity"></i> <span>永远爱您，不止今天，而是朝朝暮暮</span>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        <span><i class="far fa-heart"></i> 您陪我长大，我陪您变老</span>
+        <button class="btn-play" id="sparkBtn"><i class="fas fa-sparkle"></i> 点亮心意 <i class="fas fa-sparkle"></i></button>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+<script>
+    (function() {
+        // ======= 温馨花瓣飘落效果 =======
+        const canvas = document.getElementById('petalCanvas');
+        let ctx = canvas.getContext('2d');
+        let width, height;
+        let petals = [];
+        const PETAL_COUNT = 45;
+
+        function resizeCanvas() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+
+        class Petal {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height * 1.2 - height * 0.2;
+                this.size = 6 + Math.random() * 12;
+                this.speedY = 0.6 + Math.random() * 1.2;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotSpeed = (Math.random() - 0.5) * 0.02;
+                this.opacity = 0.5 + Math.random() * 0.4;
+                // 花瓣颜色：粉色/浅桃色/淡橙色
+                const hues = [350, 15, 30, 5];
+                const hue = hues[Math.floor(Math.random() * hues.length)];
+                this.color = `hsla(${hue}, 70%, 70%, ${this.opacity * 0.7})`;
+            }
+            draw(ctx) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.ellipse(0, 0, this.size * 0.6, this.size, 0, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.rotation += this.rotSpeed;
+                if (this.y > height + 40) {
+                    this.y = -40;
+                    this.x = Math.random() * width;
+                }
+                if (this.x > width + 30) this.x = -30;
+                if (this.x < -30) this.x = width + 30;
+            }
+        }
+
+        function initPetals() {
+            petals = [];
+            for (let i = 0; i < PETAL_COUNT; i++) {
+                petals.push(new Petal());
+            }
+        }
+
+        function animatePetals() {
+            if (!ctx) return;
+            ctx.clearRect(0, 0, width, height);
+            for (let p of petals) {
+                p.update();
+                p.draw(ctx);
+            }
+            requestAnimationFrame(animatePetals);
+        }
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            initPetals();
+        });
+        resizeCanvas();
+        initPetals();
+        animatePetals();
+
+        // ======= 飘落祝福小字 (点击“点亮心意”出现爱心祝福语) =======
+        const sparkBtn = document.getElementById('sparkBtn');
+        
+        function createFloatingMessage(text, x, y) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'floating-message';
+            msgDiv.innerText = text;
+            msgDiv.style.left = x + 'px';
+            msgDiv.style.top = y + 'px';
+            msgDiv.style.position = 'fixed';
+            msgDiv.style.whiteSpace = 'nowrap';
+            document.body.appendChild(msgDiv);
+            // 动画
+            let startTime = performance.now();
+            function animateMsg(now) {
+                const elapsed = now - startTime;
+                const duration = 1500;
+                if (elapsed >= duration) {
+                    msgDiv.remove();
+                    return;
+                }
+                const progress = elapsed / duration;
+                const newY = y - progress * 70;
+                const opacity = 1 - progress;
+                msgDiv.style.transform = `translateY(${progress * -50}px)`;
+                msgDiv.style.opacity = opacity;
+                requestAnimationFrame(animateMsg);
+            }
+            requestAnimationFrame(animateMsg);
+            setTimeout(() => {
+                if (msgDiv.parentNode) msgDiv.remove();
+            }, 1600);
+        }
+
+        sparkBtn.addEventListener('click', (e) => {
+            const rect = sparkBtn.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const loveTexts = ['❤️ 妈妈我爱你 ❤️', '🌸 母亲节快乐 🌸', '💐 愿您永远幸福 💐', '✨ 健康长寿 ✨', '🍀 好运常伴您 🍀'];
+            for (let i = 0; i < 6; i++) {
+                const offsetX = (Math.random() - 0.5) * 120;
+                const offsetY = (Math.random() - 0.5) * 80 - 30;
+                const text = loveTexts[Math.floor(Math.random() * loveTexts.length)];
+                setTimeout(() => {
+                    createFloatingMessage(text, centerX + offsetX, centerY + offsetY);
+                }, i * 60);
+            }
+            // 再轻轻播放微声彩蛋（没有音频，只做视觉）
+            const card = document.querySelector('.card');
+            card.style.transform = 'scale(1.01)';
+            setTimeout(() => { card.style.transform = ''; }, 200);
+        });
+
+        // 额外增加随机爱心飘浮 (增加浪漫)
+        setInterval(() => {
+            if (Math.random() > 0.65) return;
+            const randX = Math.random() * window.innerWidth;
+            const randY = -20;
+            const heartMsg = ['🌹', '🌸', '💗', '🌺', '💐'];
+            const msg = heartMsg[Math.floor(Math.random() * heartMsg.length)];
+            createFloatingMessage(msg, randX, randY);
+        }, 1800);
+
+        // 优化性能以及触摸点击区域
+        let touchStart = null;
+        document.body.addEventListener('touchstart', (e) => {
+            touchStart = e.touches[0];
+        });
+        document.body.addEventListener('touchend', (e) => {
+            if (!touchStart) return;
+            const dx = Math.abs(touchStart.clientX - (e.changedTouches[0].clientX));
+            const dy = Math.abs(touchStart.clientY - (e.changedTouches[0].clientY));
+            if (dx < 10 && dy < 10) {
+                // 点按任意处都有几率产生微爱心 （温柔反馈）
+                if (Math.random() > 0.5) {
+                    const x = touchStart.clientX;
+                    const y = touchStart.clientY;
+                    const tinyMsg = ['💖', '🌷', '💕', '🌸', '✨'];
+                    createFloatingMessage(tinyMsg[Math.floor(Math.random() * tinyMsg.length)], x, y);
+                }
+            }
+        });
+        
+        // 也可以让母亲的名字可自定义，如果需要显示传入名字的变量，我内置一个简单替换
+        const urlParams = new URLSearchParams(window.location.search);
+        const momParam = urlParams.get('mom');
+        if (momParam) {
+            const momDisplay = document.getElementById('momNameDisplay');
+            if (momDisplay) {
+                momDisplay.innerHTML = `✨ ${decodeURIComponent(momParam)} ✨`;
+            }
+        }
+    })();
+</script>
+</body>
+</html>
