@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>心动刮刮乐 | 自动识别奖品</title>
+    <title>心动刮刮乐 | 图片奖品版</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -25,6 +25,7 @@
             position: relative;
             overflow-x: hidden;
         }
+        /* 背景粒子效果 */
         .bg-particles {
             position: fixed;
             top: 0;
@@ -55,10 +56,10 @@
             margin: 0 auto;
         }
         .scratch-card {
-            background: rgba(255, 250, 245, 0.88);
-            backdrop-filter: blur(12px);
+            background: rgba(255, 250, 245, 0.92);
+            backdrop-filter: blur(16px);
             border-radius: 68px;
-            box-shadow: 0 30px 45px -20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 245, 225, 0.7) inset, 0 0 0 2px rgba(255, 255, 255, 0.5);
+            box-shadow: 0 30px 45px -20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 245, 225, 0.7) inset;
             padding: 2rem 1.8rem 2.2rem;
             text-align: center;
         }
@@ -73,12 +74,14 @@
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
-            letter-spacing: -0.5px;
             display: inline-flex;
             align-items: center;
             gap: 8px;
         }
-        .title-area i { font-size: 1.8rem; color: #ff5e7e; }
+        .title-area i {
+            font-size: 1.8rem;
+            color: #ff5e7e;
+        }
         .sub {
             color: #b45a6b;
             font-weight: 500;
@@ -89,7 +92,9 @@
             border-radius: 60px;
             margin-top: 8px;
         }
-        .scratch-zone { margin: 0 0 1.5rem 0; perspective: 800px; }
+        .scratch-zone {
+            margin: 0 0 1.5rem 0;
+        }
         .gift-stage {
             background: #fff2ed;
             border-radius: 48px;
@@ -104,6 +109,7 @@
             position: relative;
             overflow: hidden;
         }
+        /* 涂层样式 */
         .coating-layer {
             width: 100%;
             min-height: 280px;
@@ -129,7 +135,9 @@
             border-radius: 42px;
             pointer-events: none;
         }
-        .coating-layer:active { transform: scale(0.98); }
+        .coating-layer:active {
+            transform: scale(0.98);
+        }
         .coating-icon {
             font-size: 3.6rem;
             color: #ffe1c6;
@@ -156,6 +164,7 @@
             padding: 5px 14px;
             border-radius: 30px;
         }
+        /* 奖品展示区 - 只显示图片 */
         .prize-display {
             width: 100%;
             display: flex;
@@ -173,43 +182,36 @@
             pointer-events: auto;
         }
         .prize-img {
-            width: 140px;
-            height: 140px;
+            width: 200px;
+            height: 200px;
             background: #fff3ea;
-            border-radius: 70px;
+            border-radius: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
             box-shadow: 0 20px 30px -8px rgba(0, 0, 0, 0.2);
             overflow: hidden;
-            padding: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .prize-img:active {
+            transform: scale(0.98);
         }
         .prize-img img {
             width: 100%;
             height: 100%;
             object-fit: contain;
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+            pointer-events: none; /* 让点击事件由父容器处理 */
         }
-        .prize-name {
-            font-size: 1.7rem;
-            font-weight: 800;
-            background: linear-gradient(125deg, #b84762, #ff9068);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            margin-bottom: 0.25rem;
-        }
-        .prize-message {
-            font-size: 0.85rem;
-            color: #ad6f66;
-            background: rgba(255,235,220,0.7);
-            padding: 4px 15px;
-            border-radius: 40px;
-            display: inline-block;
+        /* 隐藏文字区域 */
+        .prize-name, .prize-message {
+            display: none;
         }
         .action-buttons {
-            margin-top: 1rem;
+            margin-top: 1.5rem;
             display: flex;
             justify-content: center;
             gap: 1.2rem;
@@ -217,7 +219,7 @@
         .btn-reset {
             background: linear-gradient(95deg, #ff9b7c, #ff7c5c);
             border: none;
-            padding: 12px 26px;
+            padding: 12px 28px;
             border-radius: 60px;
             font-weight: 700;
             font-size: 1rem;
@@ -230,7 +232,9 @@
             transition: all 0.25s ease;
             font-family: 'Inter', sans-serif;
         }
-        .btn-reset:active { transform: scale(0.95); }
+        .btn-reset:active {
+            transform: scale(0.95);
+        }
         .deco-note {
             margin-top: 1.8rem;
             font-size: 0.75rem;
@@ -240,24 +244,40 @@
             padding: 5px 12px;
             display: inline-block;
         }
+        /* 刮开闪光效果 */
         @keyframes sparkleWin {
             0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.5); background: radial-gradient(circle, #fff6e0, #ffe6ce);}
             50% { box-shadow: 0 0 0 12px rgba(255, 180, 70, 0.3); background: radial-gradient(circle, #fff0d0, #ffdbc2);}
             100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); background: radial-gradient(circle, #fff2ed, #ffe2d5);}
         }
-        .win-flash { animation: sparkleWin 0.7s cubic-bezier(0.2, 1, 0.3, 1) forwards; }
-        .coating-fadeout { animation: fadeOutScale 0.45s forwards !important; }
+        .win-flash {
+            animation: sparkleWin 0.7s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+        }
+        .coating-fadeout {
+            animation: fadeOutScale 0.45s forwards !important;
+        }
         @keyframes fadeOutScale {
             0% { opacity: 1; transform: scale(1); }
             100% { opacity: 0; transform: scale(0.7); visibility: hidden; }
         }
         @media (max-width: 550px) {
-            .scratch-card { padding: 1.5rem 1rem; }
-            .prize-img { width: 115px; height: 115px; }
-            .coating-text { font-size: 1.4rem; }
-            .prize-name { font-size: 1.4rem; }
-            .title-area h1 { font-size: 1.8rem; }
-            .btn-reset { padding: 10px 20px; font-size: 0.9rem; }
+            .scratch-card {
+                padding: 1.5rem 1rem;
+            }
+            .prize-img {
+                width: 160px;
+                height: 160px;
+            }
+            .coating-text {
+                font-size: 1.4rem;
+            }
+            .title-area h1 {
+                font-size: 1.8rem;
+            }
+            .btn-reset {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
@@ -277,9 +297,12 @@
                     <div class="coating-hint"><i class="fas fa-fingerprint"></i> 点击一下 · 好运开启</div>
                 </div>
                 <div id="prizeDisplay" class="prize-display">
-                    <div class="prize-img"><img id="prizeImage" src="" alt="惊喜奖品"></div>
-                    <div class="prize-name" id="prizeName">神秘大礼</div>
-                    <div class="prize-message" id="prizeDesc">❤️ 专属你的幸运 ❤️</div>
+                    <div class="prize-img" id="prizeImgWrapper">
+                        <img id="prizeImage" src="" alt="惊喜奖品">
+                    </div>
+                    <!-- 以下两个元素已隐藏，不再显示文字 -->
+                    <div class="prize-name" id="prizeName"></div>
+                    <div class="prize-message" id="prizeDesc"></div>
                 </div>
             </div>
         </div>
@@ -291,49 +314,33 @@
 </div>
 
 <script>
-    // ======================== 配置区（只需改这一个变量）========================
-    const IMAGE_FOLDER = "prize-images";   // 图片文件夹名称（可以改成你喜欢的，只改这一处）
-    // ========================================================================
+    // ======================== 配置区 ========================
+    const IMAGE_FOLDER = "prize-images";   // 图片文件夹名称（与你现有一致）
+    // ======================================================
 
-    // 自动探测图片总数，并生成奖品列表（用户完全不用手动维护）
+    // 自动探测图片总数，并生成奖品列表（保留你原有的可靠逻辑）
     async function fetchAllPrizes() {
         let index = 1;
         const prizes = [];
-        // 常见图片扩展名
-        const extensions = ['png', 'jpg', 'jpeg', 'webp'];
+        const extensions = ['jpg', 'jpeg', 'png', 'webp'];  // 按需调整顺序
         
         while (true) {
             let found = false;
             for (let ext of extensions) {
-                // 先尝试纯数字文件名： 1.png, 2.jpg ... 
                 let url = `${IMAGE_FOLDER}/${index}.${ext}`;
                 let exists = await checkImageExists(url);
                 if (exists) {
-                    // 提取奖品名称：没有额外文字就用默认
-                    let prizeName = `惊喜礼物 ${index}`;
-                    prizes.push({ img: `${index}.${ext}`, name: prizeName, desc: "❤️ 好运降临 ❤️" });
+                    prizes.push({ img: `${index}.${ext}`, fullUrl: url });
                     found = true;
                     break;
                 }
-                // 再尝试 数字-名称.扩展名 或 数字_名称.扩展名 格式
-                // 我们无法预知名称，所以这里先不动态提取，这是简化版；但可以支持带名字的自动解析
-                // 为了方便，针对有意义的文件名，我们采用另一种方式：如果文件名包含“-”或“_”，则解析出后半部分
-                // 但由于我们无法列出文件夹，这种需要服务器端，所以放弃。除非用户按纯数字命名，我们给出默认名称。
-                // 为了更好的体验，用户可以手动在文件名中加入名称，但为了不改代码，我们不做强制。
-                // 下面提供高级自动名称提取：通过尝试请求一个假设的文件名，但不知道具体名称。所以最终建议纯数字命名，然后自定义奖品名称在JS里？
-                // 但是用户要求不改代码，那么我们就用"惊喜礼物X"作为名字，足够简单。
             }
-            if (!found) {
-                // 尝试 index 前面加0？不做了
-                break;
-            }
+            if (!found) break;
             index++;
         }
         if (prizes.length === 0) {
-            // 一张图片都没找到，给个默认示例（提示用户放图片）
-            console.warn("未在", IMAGE_FOLDER, "中找到任何以数字命名的图片（1.png,2.jpg...）");
-            // 降级显示一个占位提示
-            prizes.push({ img: "", name: "✨ 请放入奖品图片 ✨", desc: `将图片按1.png,2.jpg...放入 ${IMAGE_FOLDER} 文件夹` });
+            console.warn("未在", IMAGE_FOLDER, "中找到任何以数字命名的图片（1.jpg,2.png...）");
+            // 提示用户（只在控制台提示，页面不再显示文字）
         }
         return prizes;
     }
@@ -347,56 +354,55 @@
         });
     }
 
-    // 缓存奖品列表
     let prizeList = [];
     let isScratched = false;
     let isAnimating = false;
-    let currentPrize = null;
+    let currentPrizeUrl = '';  // 存储当前奖品图片的完整URL，用于点击打开
 
     const coatingLayer = document.getElementById('coatingLayer');
     const prizeDisplay = document.getElementById('prizeDisplay');
     const prizeImage = document.getElementById('prizeImage');
-    const prizeNameSpan = document.getElementById('prizeName');
-    const prizeDescSpan = document.getElementById('prizeDesc');
+    const prizeImgWrapper = document.getElementById('prizeImgWrapper');
     const resetBtn = document.getElementById('resetBtn');
     const giftStage = document.getElementById('giftStage');
 
-    // 随机抽取奖品
     function getRandomPrize() {
-        if (!prizeList.length) return { img: "", name: "暂无奖品", desc: "请添加图片" };
+        if (!prizeList.length) return null;
         const randomIndex = Math.floor(Math.random() * prizeList.length);
-        return { ...prizeList[randomIndex] };
+        return prizeList[randomIndex];
     }
 
     function setPrizeContent(prize) {
-        if (!prize.img) {
-            prizeImage.src = "";
-            prizeNameSpan.innerText = prize.name;
-            prizeDescSpan.innerText = prize.desc;
-            return;
-        }
-        const imgPath = `${IMAGE_FOLDER}/${prize.img}`;
+        if (!prize) return;
+        const imgPath = prize.fullUrl; // 已经是完整相对路径
+        currentPrizeUrl = imgPath;
         prizeImage.src = imgPath;
-        prizeImage.alt = prize.name;
-        prizeNameSpan.innerText = prize.name;
-        prizeDescSpan.innerText = prize.desc;
+        // 图片加载失败时的后备（基本不会触发，因为之前检测过了）
         prizeImage.onerror = () => {
             prizeImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23ffcdb0'/%3E%3Ctext x='50' y='67' text-anchor='middle' fill='%23944d3a' font-size='14'%3E?%3C/text%3E%3C/svg%3E";
-            prizeNameSpan.innerText = "图片丢失";
         };
+    }
+
+    // 点击图片打开大图（新标签页，方便保存）
+    function openFullImage() {
+        if (currentPrizeUrl) {
+            window.open(currentPrizeUrl, '_blank');
+        }
     }
 
     async function scratchToReveal() {
         if (isScratched || isAnimating) return;
         if (prizeList.length === 0) {
-            // 未加载完或没有奖品，提示等待
-            alert("奖品加载中，请稍后...");
-            return;
+            // 如果没有奖品，尝试重新加载一次
+            prizeList = await fetchAllPrizes();
+            if (prizeList.length === 0) {
+                alert("未找到奖品图片，请确认 prize-images 文件夹中有 1.jpg, 2.jpg ... 等图片");
+                return;
+            }
         }
         isAnimating = true;
-        const newPrize = getRandomPrize();
-        currentPrize = newPrize;
-        setPrizeContent(currentPrize);
+        const prize = getRandomPrize();
+        setPrizeContent(prize);
 
         coatingLayer.classList.add('coating-fadeout');
         const onFadeEnd = () => {
@@ -410,6 +416,7 @@
             coatingLayer.removeEventListener('animationend', onFadeEnd);
         };
         coatingLayer.addEventListener('animationend', onFadeEnd, { once: true });
+        // 后备定时器
         setTimeout(() => {
             if (isAnimating && !isScratched) {
                 if (coatingLayer.style.display !== 'none') coatingLayer.style.display = 'none';
@@ -429,26 +436,21 @@
         coatingLayer.style.display = 'flex';
         coatingLayer.classList.remove('coating-fadeout');
         prizeImage.src = "";
-        prizeNameSpan.innerText = "神秘大礼";
-        prizeDescSpan.innerText = "❤️ 专属你的幸运 ❤️";
+        currentPrizeUrl = "";
         void coatingLayer.offsetHeight;
     }
 
-    // 初始化加载奖品列表
+    // 绑定事件
     async function init() {
         prizeList = await fetchAllPrizes();
         console.log(`🎁 共加载 ${prizeList.length} 个奖品`, prizeList);
-        if (prizeList.length === 0) {
-            // 提示用户建立文件夹并放图片
-            prizeNameSpan.innerText = "🤗 提示";
-            prizeDescSpan.innerText = `请将图片 (1.png,2.jpg...) 放入 ${IMAGE_FOLDER} 文件夹`;
-        }
         coatingLayer.addEventListener('click', scratchToReveal);
         resetBtn.addEventListener('click', resetGame);
+        prizeImgWrapper.addEventListener('click', openFullImage);
     }
     init();
 
-    // 背景粒子效果
+    // 背景粒子效果（保留）
     function createParticles() {
         const container = document.getElementById('particles');
         for (let i = 0; i < 45; i++) {
