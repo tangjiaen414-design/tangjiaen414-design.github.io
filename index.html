@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>心动刮刮乐 | 稳稳显示图片</title>
+    <title>心动刮刮乐 | 自动识别奖品</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -13,186 +15,457 @@
         }
         body {
             min-height: 100vh;
-            background: linear-gradient(145deg, #fecfcc, #ffe1df, #fbc8cd);
+            background: linear-gradient(145deg, #fecfcc 0%, #ffe1df 30%, #fbc8cd 100%);
+            background-attachment: fixed;
             display: flex;
-            justify-content: center;
             align-items: center;
-            font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-            padding: 20px;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            padding: 1.5rem;
+            position: relative;
+            overflow-x: hidden;
         }
-        .card {
-            background: rgba(255,250,245,0.92);
-            backdrop-filter: blur(16px);
-            border-radius: 60px;
-            padding: 30px 20px 40px;
-            max-width: 500px;
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            text-align: center;
-            box-shadow: 0 25px 40px rgba(0,0,0,0.2);
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
         }
-        h1 {
-            font-size: 2rem;
+        .particle {
+            position: absolute;
+            background: rgba(255, 210, 210, 0.5);
+            border-radius: 50%;
+            animation: floatParticle 14s infinite ease-in-out;
+            backdrop-filter: blur(1px);
+        }
+        @keyframes floatParticle {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.5; }
+            80% { opacity: 0.6; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+        .scratch-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .scratch-card {
+            background: rgba(255, 250, 245, 0.88);
+            backdrop-filter: blur(12px);
+            border-radius: 68px;
+            box-shadow: 0 30px 45px -20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 245, 225, 0.7) inset, 0 0 0 2px rgba(255, 255, 255, 0.5);
+            padding: 2rem 1.8rem 2.2rem;
+            text-align: center;
+        }
+        .title-area {
+            margin-bottom: 1.8rem;
+        }
+        .title-area h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
             background: linear-gradient(135deg, #d4425c, #ff8c66);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
-            margin-bottom: 8px;
-        }
-        .sub {
-            background: rgba(255,230,220,0.7);
-            display: inline-block;
-            padding: 5px 18px;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            color: #b45a6b;
-            margin-bottom: 25px;
-        }
-        .scratch-box {
-            background: #f3e7df;
-            border-radius: 48px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .coating {
-            background: radial-gradient(circle at 30% 20%, #e5cfc0, #cfb6a4);
-            border-radius: 40px;
-            padding: 50px 20px;
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-        .coating:active {
-            transform: scale(0.97);
-        }
-        .coating div {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #fff5e6;
-            text-shadow: 2px 2px 6px #a6583a;
-        }
-        .prize-area {
-            display: none;
-            background: #fff2ed;
-            border-radius: 40px;
-            padding: 20px;
-        }
-        .prize-area.show {
-            display: block;
-            animation: fadePop 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-        }
-        @keyframes fadePop {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        .prize-img {
-            width: 80%;
-            max-width: 260px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 32px;
-            padding: 16px;
-            box-shadow: 0 12px 20px rgba(0,0,0,0.1);
-        }
-        .prize-img img {
-            width: 100%;
-            height: auto;
-            border-radius: 20px;
-            display: block;
-        }
-        button {
-            background: linear-gradient(95deg, #ff9b7c, #ff7c5c);
-            border: none;
-            padding: 12px 28px;
-            border-radius: 60px;
-            font-size: 1rem;
-            font-weight: bold;
-            color: white;
+            letter-spacing: -0.5px;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            cursor: pointer;
-            margin-top: 15px;
-            box-shadow: 0 6px 14px rgba(200,70,50,0.3);
         }
-        button:active {
-            transform: scale(0.96);
-        }
-        .footer {
-            margin-top: 24px;
-            font-size: 0.7rem;
-            color: #c56a6a;
-            background: rgba(255,245,220,0.6);
+        .title-area i { font-size: 1.8rem; color: #ff5e7e; }
+        .sub {
+            color: #b45a6b;
+            font-weight: 500;
+            font-size: 0.85rem;
+            background: rgba(255, 230, 220, 0.7);
             display: inline-block;
-            padding: 5px 16px;
+            padding: 5px 18px;
+            border-radius: 60px;
+            margin-top: 8px;
+        }
+        .scratch-zone { margin: 0 0 1.5rem 0; perspective: 800px; }
+        .gift-stage {
+            background: #fff2ed;
+            border-radius: 48px;
+            min-height: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.2rem;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 245, 230, 0.9);
+            position: relative;
+            overflow: hidden;
+        }
+        .coating-layer {
+            width: 100%;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            background: radial-gradient(circle at 30% 20%, #e5cfc0, #cfb6a4);
+            border-radius: 42px;
+            box-shadow: 0 0 0 2px rgba(255, 215, 185, 0.6), inset 0 1px 4px rgba(0,0,0,0.05);
+            position: relative;
+        }
+        .coating-layer::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(45deg, rgba(255,235,200,0.4) 0px, rgba(255,235,200,0.4) 2px, rgba(210,170,140,0.2) 2px, rgba(210,170,140,0.2) 8px);
+            border-radius: 42px;
+            pointer-events: none;
+        }
+        .coating-layer:active { transform: scale(0.98); }
+        .coating-icon {
+            font-size: 3.6rem;
+            color: #ffe1c6;
+            text-shadow: 2px 2px 0 #b87a5a;
+            margin-bottom: 1rem;
+            z-index: 2;
+        }
+        .coating-text {
+            font-weight: 800;
+            font-size: 1.7rem;
+            letter-spacing: 3px;
+            color: #fff5e6;
+            text-shadow: 2px 2px 6px #a6583a;
+            background: rgba(0,0,0,0.1);
+            padding: 0.3rem 1.2rem;
+            border-radius: 60px;
+            font-family: 'Playfair Display', serif;
+        }
+        .coating-hint {
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: #f9e0ce;
+            background: rgba(90, 45, 30, 0.3);
+            padding: 5px 14px;
             border-radius: 30px;
+        }
+        .prize-display {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0.85) translateY(20px);
+            transition: opacity 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.2), transform 0.55s cubic-bezier(0.2, 0.85, 0.3, 1.2);
+            pointer-events: none;
+        }
+        .prize-display.show-prize {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
+        }
+        .prize-img {
+            width: 140px;
+            height: 140px;
+            background: #fff3ea;
+            border-radius: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            box-shadow: 0 20px 30px -8px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            padding: 12px;
+        }
+        .prize-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+        .prize-name {
+            font-size: 1.7rem;
+            font-weight: 800;
+            background: linear-gradient(125deg, #b84762, #ff9068);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.25rem;
+        }
+        .prize-message {
+            font-size: 0.85rem;
+            color: #ad6f66;
+            background: rgba(255,235,220,0.7);
+            padding: 4px 15px;
+            border-radius: 40px;
+            display: inline-block;
+        }
+        .action-buttons {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+        }
+        .btn-reset {
+            background: linear-gradient(95deg, #ff9b7c, #ff7c5c);
+            border: none;
+            padding: 12px 26px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1rem;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            box-shadow: 0 8px 18px rgba(200, 70, 50, 0.3);
+            transition: all 0.25s ease;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-reset:active { transform: scale(0.95); }
+        .deco-note {
+            margin-top: 1.8rem;
+            font-size: 0.75rem;
+            color: #c56a6a;
+            background: rgba(255,245,205,0.5);
+            border-radius: 100px;
+            padding: 5px 12px;
+            display: inline-block;
+        }
+        @keyframes sparkleWin {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.5); background: radial-gradient(circle, #fff6e0, #ffe6ce);}
+            50% { box-shadow: 0 0 0 12px rgba(255, 180, 70, 0.3); background: radial-gradient(circle, #fff0d0, #ffdbc2);}
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); background: radial-gradient(circle, #fff2ed, #ffe2d5);}
+        }
+        .win-flash { animation: sparkleWin 0.7s cubic-bezier(0.2, 1, 0.3, 1) forwards; }
+        .coating-fadeout { animation: fadeOutScale 0.45s forwards !important; }
+        @keyframes fadeOutScale {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.7); visibility: hidden; }
+        }
+        @media (max-width: 550px) {
+            .scratch-card { padding: 1.5rem 1rem; }
+            .prize-img { width: 115px; height: 115px; }
+            .coating-text { font-size: 1.4rem; }
+            .prize-name { font-size: 1.4rem; }
+            .title-area h1 { font-size: 1.8rem; }
+            .btn-reset { padding: 10px 20px; font-size: 0.9rem; }
         }
     </style>
 </head>
 <body>
-<div class="card">
-    <h1>🎁 心动刮刮乐</h1>
-    <div class="sub">轻触涂层 · 刮出惊喜</div>
-
-    <div class="scratch-box">
-        <div id="coatingLayer" class="coating">
-            <div>✨ 刮开涂层 ✨</div>
-            <div style="font-size: 1rem; margin-top: 15px;">👇 点击一下 👇</div>
+<div class="bg-particles" id="particles"></div>
+<div class="scratch-wrapper">
+    <div class="scratch-card">
+        <div class="title-area">
+            <h1><i class="fas fa-gift"></i> 心动刮刮乐</h1>
+            <div class="sub"><i class="fas fa-hand-peace"></i> 轻触涂层 · 收获专属惊喜</div>
         </div>
-        <div id="prizeDisplay" class="prize-area">
-            <div class="prize-img">
-                <img id="prizeImage" src="" alt="奖品">
+        <div class="scratch-zone">
+            <div class="gift-stage" id="giftStage">
+                <div id="coatingLayer" class="coating-layer">
+                    <div class="coating-icon"><i class="fas fa-coin"></i><i class="fas fa-star-of-life"></i></div>
+                    <div class="coating-text">刮 开 涂 层</div>
+                    <div class="coating-hint"><i class="fas fa-fingerprint"></i> 点击一下 · 好运开启</div>
+                </div>
+                <div id="prizeDisplay" class="prize-display">
+                    <div class="prize-img"><img id="prizeImage" src="" alt="惊喜奖品"></div>
+                    <div class="prize-name" id="prizeName">神秘大礼</div>
+                    <div class="prize-message" id="prizeDesc">❤️ 专属你的幸运 ❤️</div>
+                </div>
             </div>
         </div>
+        <div class="action-buttons">
+            <button class="btn-reset" id="resetBtn"><i class="fas fa-redo-alt"></i> 再来一张</button>
+        </div>
+        <div class="deco-note"><i class="fas fa-heart"></i> 每一份惊喜，都是爱的心意 <i class="fas fa-heart"></i></div>
     </div>
-
-    <button id="resetBtn">🔁 再来一张</button>
-    <div class="footer">❤️ 每一份礼物都是心意 ❤️</div>
 </div>
 
 <script>
-    // ========== 硬编码图片路径（请确认图片是 1.jpg ~ 9.jpg）==========
-    const TOTAL_IMAGES = 9;                // 图片总数
-    const IMAGE_FOLDER = "prize-images";   // 文件夹名
+    // ======================== 配置区（只需改这一个变量）========================
+    const IMAGE_FOLDER = "prize-images";   // 图片文件夹名称（可以改成你喜欢的，只改这一处）
+    // ========================================================================
 
-    // 直接构建 9 个图片 URL（完全可靠）
-    const imageUrls = [];
-    for (let i = 1; i <= TOTAL_IMAGES; i++) {
-        imageUrls.push(`${IMAGE_FOLDER}/${i}.jpg`);
+    // 自动探测图片总数，并生成奖品列表（用户完全不用手动维护）
+    async function fetchAllPrizes() {
+        let index = 1;
+        const prizes = [];
+        // 常见图片扩展名
+        const extensions = ['png', 'jpg', 'jpeg', 'webp'];
+        
+        while (true) {
+            let found = false;
+            for (let ext of extensions) {
+                // 先尝试纯数字文件名： 1.png, 2.jpg ... 
+                let url = `${IMAGE_FOLDER}/${index}.${ext}`;
+                let exists = await checkImageExists(url);
+                if (exists) {
+                    // 提取奖品名称：没有额外文字就用默认
+                    let prizeName = `惊喜礼物 ${index}`;
+                    prizes.push({ img: `${index}.${ext}`, name: prizeName, desc: "❤️ 好运降临 ❤️" });
+                    found = true;
+                    break;
+                }
+                // 再尝试 数字-名称.扩展名 或 数字_名称.扩展名 格式
+                // 我们无法预知名称，所以这里先不动态提取，这是简化版；但可以支持带名字的自动解析
+                // 为了方便，针对有意义的文件名，我们采用另一种方式：如果文件名包含“-”或“_”，则解析出后半部分
+                // 但由于我们无法列出文件夹，这种需要服务器端，所以放弃。除非用户按纯数字命名，我们给出默认名称。
+                // 为了更好的体验，用户可以手动在文件名中加入名称，但为了不改代码，我们不做强制。
+                // 下面提供高级自动名称提取：通过尝试请求一个假设的文件名，但不知道具体名称。所以最终建议纯数字命名，然后自定义奖品名称在JS里？
+                // 但是用户要求不改代码，那么我们就用"惊喜礼物X"作为名字，足够简单。
+            }
+            if (!found) {
+                // 尝试 index 前面加0？不做了
+                break;
+            }
+            index++;
+        }
+        if (prizes.length === 0) {
+            // 一张图片都没找到，给个默认示例（提示用户放图片）
+            console.warn("未在", IMAGE_FOLDER, "中找到任何以数字命名的图片（1.png,2.jpg...）");
+            // 降级显示一个占位提示
+            prizes.push({ img: "", name: "✨ 请放入奖品图片 ✨", desc: `将图片按1.png,2.jpg...放入 ${IMAGE_FOLDER} 文件夹` });
+        }
+        return prizes;
     }
 
-    let isRevealed = false;
+    function checkImageExists(url) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve(true);
+            img.onerror = () => resolve(false);
+            img.src = url;
+        });
+    }
 
-    const coating = document.getElementById('coatingLayer');
+    // 缓存奖品列表
+    let prizeList = [];
+    let isScratched = false;
+    let isAnimating = false;
+    let currentPrize = null;
+
+    const coatingLayer = document.getElementById('coatingLayer');
     const prizeDisplay = document.getElementById('prizeDisplay');
-    const prizeImg = document.getElementById('prizeImage');
+    const prizeImage = document.getElementById('prizeImage');
+    const prizeNameSpan = document.getElementById('prizeName');
+    const prizeDescSpan = document.getElementById('prizeDesc');
     const resetBtn = document.getElementById('resetBtn');
+    const giftStage = document.getElementById('giftStage');
 
-    function getRandomImageUrl() {
-        const idx = Math.floor(Math.random() * imageUrls.length);
-        return imageUrls[idx];
+    // 随机抽取奖品
+    function getRandomPrize() {
+        if (!prizeList.length) return { img: "", name: "暂无奖品", desc: "请添加图片" };
+        const randomIndex = Math.floor(Math.random() * prizeList.length);
+        return { ...prizeList[randomIndex] };
     }
 
-    function revealPrize() {
-        if (isRevealed) return;
-        const url = getRandomImageUrl();
-        prizeImg.src = url;
-        // 如果图片加载失败（理论上不会，因为直接访问能成功），显示一个简单提示
-        prizeImg.onerror = () => {
-            prizeImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23ffb3ba'/%3E%3Ctext x='50' y='70' text-anchor='middle' fill='%23cc0000' font-size='22'%3E!%3C/text%3E%3C/svg%3E";
+    function setPrizeContent(prize) {
+        if (!prize.img) {
+            prizeImage.src = "";
+            prizeNameSpan.innerText = prize.name;
+            prizeDescSpan.innerText = prize.desc;
+            return;
+        }
+        const imgPath = `${IMAGE_FOLDER}/${prize.img}`;
+        prizeImage.src = imgPath;
+        prizeImage.alt = prize.name;
+        prizeNameSpan.innerText = prize.name;
+        prizeDescSpan.innerText = prize.desc;
+        prizeImage.onerror = () => {
+            prizeImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23ffcdb0'/%3E%3Ctext x='50' y='67' text-anchor='middle' fill='%23944d3a' font-size='14'%3E?%3C/text%3E%3C/svg%3E";
+            prizeNameSpan.innerText = "图片丢失";
         };
-        coating.style.display = 'none';
-        prizeDisplay.classList.add('show');
-        isRevealed = true;
+    }
+
+    async function scratchToReveal() {
+        if (isScratched || isAnimating) return;
+        if (prizeList.length === 0) {
+            // 未加载完或没有奖品，提示等待
+            alert("奖品加载中，请稍后...");
+            return;
+        }
+        isAnimating = true;
+        const newPrize = getRandomPrize();
+        currentPrize = newPrize;
+        setPrizeContent(currentPrize);
+
+        coatingLayer.classList.add('coating-fadeout');
+        const onFadeEnd = () => {
+            coatingLayer.style.display = 'none';
+            coatingLayer.classList.remove('coating-fadeout');
+            prizeDisplay.classList.add('show-prize');
+            giftStage.classList.add('win-flash');
+            setTimeout(() => giftStage.classList.remove('win-flash'), 700);
+            isScratched = true;
+            isAnimating = false;
+            coatingLayer.removeEventListener('animationend', onFadeEnd);
+        };
+        coatingLayer.addEventListener('animationend', onFadeEnd, { once: true });
+        setTimeout(() => {
+            if (isAnimating && !isScratched) {
+                if (coatingLayer.style.display !== 'none') coatingLayer.style.display = 'none';
+                prizeDisplay.classList.add('show-prize');
+                giftStage.classList.add('win-flash');
+                setTimeout(() => giftStage.classList.remove('win-flash'), 700);
+                isScratched = true;
+                isAnimating = false;
+            }
+        }, 500);
     }
 
     function resetGame() {
-        coating.style.display = 'flex';
-        prizeDisplay.classList.remove('show');
-        isRevealed = false;
-        prizeImg.src = "";
+        if (isAnimating) return;
+        isScratched = false;
+        prizeDisplay.classList.remove('show-prize');
+        coatingLayer.style.display = 'flex';
+        coatingLayer.classList.remove('coating-fadeout');
+        prizeImage.src = "";
+        prizeNameSpan.innerText = "神秘大礼";
+        prizeDescSpan.innerText = "❤️ 专属你的幸运 ❤️";
+        void coatingLayer.offsetHeight;
     }
 
-    coating.addEventListener('click', revealPrize);
-    resetBtn.addEventListener('click', resetGame);
+    // 初始化加载奖品列表
+    async function init() {
+        prizeList = await fetchAllPrizes();
+        console.log(`🎁 共加载 ${prizeList.length} 个奖品`, prizeList);
+        if (prizeList.length === 0) {
+            // 提示用户建立文件夹并放图片
+            prizeNameSpan.innerText = "🤗 提示";
+            prizeDescSpan.innerText = `请将图片 (1.png,2.jpg...) 放入 ${IMAGE_FOLDER} 文件夹`;
+        }
+        coatingLayer.addEventListener('click', scratchToReveal);
+        resetBtn.addEventListener('click', resetGame);
+    }
+    init();
+
+    // 背景粒子效果
+    function createParticles() {
+        const container = document.getElementById('particles');
+        for (let i = 0; i < 45; i++) {
+            const p = document.createElement('div');
+            p.classList.add('particle');
+            const s = 3 + Math.random() * 12;
+            p.style.width = s + 'px';
+            p.style.height = s + 'px';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.top = Math.random() * 100 + '%';
+            p.style.animationDelay = Math.random() * 15 + 's';
+            p.style.animationDuration = 8 + Math.random() * 12 + 's';
+            p.style.opacity = 0.2 + Math.random() * 0.4;
+            container.appendChild(p);
+        }
+    }
+    createParticles();
 </script>
 </body>
 </html>
