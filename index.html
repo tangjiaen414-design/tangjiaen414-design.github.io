@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>心动刮刮乐 | 图片奖品版</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    <title>心动刮刮乐 | 浪漫弹窗版</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -13,6 +13,7 @@
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
+
         body {
             min-height: 100vh;
             background: linear-gradient(145deg, #fecfcc 0%, #ffe1df 30%, #fbc8cd 100%);
@@ -24,9 +25,16 @@
             padding: 1.5rem;
             position: relative;
             overflow-x: hidden;
+            animation: fadeInBody 0.6s ease-out;
         }
-        /* 背景粒子效果 */
-        .bg-particles {
+
+        @keyframes fadeInBody {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* 漂浮爱心背景（增强动态） */
+        .floating-hearts {
             position: fixed;
             top: 0;
             left: 0;
@@ -34,27 +42,55 @@
             height: 100%;
             pointer-events: none;
             z-index: 0;
+            overflow: hidden;
         }
-        .particle {
+
+        .float-heart {
             position: absolute;
-            background: rgba(255, 210, 210, 0.5);
-            border-radius: 50%;
-            animation: floatParticle 14s infinite ease-in-out;
-            backdrop-filter: blur(1px);
+            color: rgba(255, 100, 130, 0.4);
+            font-size: 1.2rem;
+            animation: floatUp 12s linear infinite;
+            bottom: -50px;
         }
-        @keyframes floatParticle {
-            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-            20% { opacity: 0.5; }
-            80% { opacity: 0.6; }
-            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
         }
+
+        /* 主卡片入场动画 */
         .scratch-wrapper {
             position: relative;
             z-index: 10;
             width: 100%;
             max-width: 500px;
             margin: 0 auto;
+            animation: cardRise 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
+
+        @keyframes cardRise {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
         .scratch-card {
             background: rgba(255, 250, 245, 0.92);
             backdrop-filter: blur(16px);
@@ -62,10 +98,17 @@
             box-shadow: 0 30px 45px -20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 245, 225, 0.7) inset;
             padding: 2rem 1.8rem 2.2rem;
             text-align: center;
+            transition: box-shadow 0.3s;
         }
+
+        .scratch-card:hover {
+            box-shadow: 0 35px 50px -20px rgba(0, 0, 0, 0.4);
+        }
+
         .title-area {
             margin-bottom: 1.8rem;
         }
+
         .title-area h1 {
             font-family: 'Playfair Display', serif;
             font-size: 2.2rem;
@@ -77,11 +120,19 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            animation: titleGlow 2s ease-in-out infinite alternate;
         }
+
+        @keyframes titleGlow {
+            0% { filter: drop-shadow(0 0 2px rgba(255,100,100,0.3)); }
+            100% { filter: drop-shadow(0 0 8px rgba(255,100,100,0.6)); }
+        }
+
         .title-area i {
             font-size: 1.8rem;
             color: #ff5e7e;
         }
+
         .sub {
             color: #b45a6b;
             font-weight: 500;
@@ -91,10 +142,13 @@
             padding: 5px 18px;
             border-radius: 60px;
             margin-top: 8px;
+            backdrop-filter: blur(2px);
         }
+
         .scratch-zone {
             margin: 0 0 1.5rem 0;
         }
+
         .gift-stage {
             background: #fff2ed;
             border-radius: 48px;
@@ -108,7 +162,9 @@
             border: 1px solid rgba(255, 245, 230, 0.9);
             position: relative;
             overflow: hidden;
+            transition: all 0.2s;
         }
+
         /* 涂层样式 */
         .coating-layer {
             width: 100%;
@@ -124,6 +180,7 @@
             box-shadow: 0 0 0 2px rgba(255, 215, 185, 0.6), inset 0 1px 4px rgba(0,0,0,0.05);
             position: relative;
         }
+
         .coating-layer::after {
             content: "";
             position: absolute;
@@ -135,16 +192,26 @@
             border-radius: 42px;
             pointer-events: none;
         }
+
         .coating-layer:active {
             transform: scale(0.98);
         }
+
         .coating-icon {
             font-size: 3.6rem;
             color: #ffe1c6;
             text-shadow: 2px 2px 0 #b87a5a;
             margin-bottom: 1rem;
             z-index: 2;
+            animation: iconShake 1.2s infinite;
         }
+
+        @keyframes iconShake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+        }
+
         .coating-text {
             font-weight: 800;
             font-size: 1.7rem;
@@ -156,6 +223,7 @@
             border-radius: 60px;
             font-family: 'Playfair Display', serif;
         }
+
         .coating-hint {
             margin-top: 1rem;
             font-size: 0.8rem;
@@ -164,7 +232,8 @@
             padding: 5px 14px;
             border-radius: 30px;
         }
-        /* 奖品展示区 - 只显示图片 */
+
+        /* 奖品展示区 */
         .prize-display {
             width: 100%;
             display: flex;
@@ -176,11 +245,13 @@
             transition: opacity 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.2), transform 0.55s cubic-bezier(0.2, 0.85, 0.3, 1.2);
             pointer-events: none;
         }
+
         .prize-display.show-prize {
             opacity: 1;
             transform: scale(1) translateY(0);
             pointer-events: auto;
         }
+
         .prize-img {
             width: 200px;
             height: 200px;
@@ -194,28 +265,33 @@
             overflow: hidden;
             padding: 16px;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
+
         .prize-img:active {
             transform: scale(0.98);
         }
+
         .prize-img img {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
-            pointer-events: none; /* 让点击事件由父容器处理 */
+            pointer-events: none;
         }
-        /* 隐藏文字区域 */
+
+        /* 隐藏文字 */
         .prize-name, .prize-message {
             display: none;
         }
+
+        /* 按钮 */
         .action-buttons {
             margin-top: 1.5rem;
             display: flex;
             justify-content: center;
             gap: 1.2rem;
         }
+
         .btn-reset {
             background: linear-gradient(95deg, #ff9b7c, #ff7c5c);
             border: none;
@@ -231,10 +307,32 @@
             box-shadow: 0 8px 18px rgba(200, 70, 50, 0.3);
             transition: all 0.25s ease;
             font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow: hidden;
         }
+
+        .btn-reset::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s;
+        }
+
+        .btn-reset:active::after {
+            width: 200px;
+            height: 200px;
+        }
+
         .btn-reset:active {
             transform: scale(0.95);
         }
+
         .deco-note {
             margin-top: 1.8rem;
             font-size: 0.75rem;
@@ -244,7 +342,8 @@
             padding: 5px 12px;
             display: inline-block;
         }
-        /* 刮开闪光效果 */
+
+        /* 刮开闪光 */
         @keyframes sparkleWin {
             0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.5); background: radial-gradient(circle, #fff6e0, #ffe6ce);}
             50% { box-shadow: 0 0 0 12px rgba(255, 180, 70, 0.3); background: radial-gradient(circle, #fff0d0, #ffdbc2);}
@@ -253,6 +352,7 @@
         .win-flash {
             animation: sparkleWin 0.7s cubic-bezier(0.2, 1, 0.3, 1) forwards;
         }
+
         .coating-fadeout {
             animation: fadeOutScale 0.45s forwards !important;
         }
@@ -260,6 +360,72 @@
             0% { opacity: 1; transform: scale(1); }
             100% { opacity: 0; transform: scale(0.7); visibility: hidden; }
         }
+
+        /* ========== 弹窗模态框 ========== */
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeInModal 0.3s ease;
+        }
+
+        @keyframes fadeInModal {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            background: transparent;
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            animation: zoomIn 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-content img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 32px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            font-size: 2rem;
+            color: white;
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .close-modal:hover {
+            background: rgba(0,0,0,0.8);
+        }
+
         @media (max-width: 550px) {
             .scratch-card {
                 padding: 1.5rem 1rem;
@@ -282,7 +448,11 @@
     </style>
 </head>
 <body>
-<div class="bg-particles" id="particles"></div>
+
+<!-- 漂浮爱心背景（动态） -->
+<div class="floating-hearts" id="floatingHearts"></div>
+
+<!-- 主卡片 -->
 <div class="scratch-wrapper">
     <div class="scratch-card">
         <div class="title-area">
@@ -300,7 +470,6 @@
                     <div class="prize-img" id="prizeImgWrapper">
                         <img id="prizeImage" src="" alt="惊喜奖品">
                     </div>
-                    <!-- 以下两个元素已隐藏，不再显示文字 -->
                     <div class="prize-name" id="prizeName"></div>
                     <div class="prize-message" id="prizeDesc"></div>
                 </div>
@@ -309,7 +478,15 @@
         <div class="action-buttons">
             <button class="btn-reset" id="resetBtn"><i class="fas fa-redo-alt"></i> 再来一张</button>
         </div>
-        <div class="deco-note"><i class="fas fa-heart"></i> 每一份惊喜，都是爱的心意 <i class="fas fa-heart"></i></div>
+        <div class="deco-note"><i class="fas fa-heart"></i> 点击图片可放大保存 <i class="fas fa-heart"></i></div>
+    </div>
+</div>
+
+<!-- 弹窗模态框 -->
+<div id="imageModal" class="image-modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <img id="modalImage" src="" alt="大图">
     </div>
 </div>
 
@@ -318,11 +495,11 @@
     const IMAGE_FOLDER = "prize-images";   // 图片文件夹名称（与你现有一致）
     // ======================================================
 
-    // 自动探测图片总数，并生成奖品列表（保留你原有的可靠逻辑）
+    // 自动探测图片总数
     async function fetchAllPrizes() {
         let index = 1;
         const prizes = [];
-        const extensions = ['jpg', 'jpeg', 'png', 'webp'];  // 按需调整顺序
+        const extensions = ['jpg', 'jpeg', 'png', 'webp'];
         
         while (true) {
             let found = false;
@@ -340,7 +517,6 @@
         }
         if (prizes.length === 0) {
             console.warn("未在", IMAGE_FOLDER, "中找到任何以数字命名的图片（1.jpg,2.png...）");
-            // 提示用户（只在控制台提示，页面不再显示文字）
         }
         return prizes;
     }
@@ -357,7 +533,7 @@
     let prizeList = [];
     let isScratched = false;
     let isAnimating = false;
-    let currentPrizeUrl = '';  // 存储当前奖品图片的完整URL，用于点击打开
+    let currentPrizeUrl = '';
 
     const coatingLayer = document.getElementById('coatingLayer');
     const prizeDisplay = document.getElementById('prizeDisplay');
@@ -365,6 +541,11 @@
     const prizeImgWrapper = document.getElementById('prizeImgWrapper');
     const resetBtn = document.getElementById('resetBtn');
     const giftStage = document.getElementById('giftStage');
+
+    // 弹窗元素
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImage');
+    const closeModal = document.querySelector('.close-modal');
 
     function getRandomPrize() {
         if (!prizeList.length) return null;
@@ -374,26 +555,29 @@
 
     function setPrizeContent(prize) {
         if (!prize) return;
-        const imgPath = prize.fullUrl; // 已经是完整相对路径
-        currentPrizeUrl = imgPath;
-        prizeImage.src = imgPath;
-        // 图片加载失败时的后备（基本不会触发，因为之前检测过了）
+        currentPrizeUrl = prize.fullUrl;
+        prizeImage.src = currentPrizeUrl;
         prizeImage.onerror = () => {
             prizeImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23ffcdb0'/%3E%3Ctext x='50' y='67' text-anchor='middle' fill='%23944d3a' font-size='14'%3E?%3C/text%3E%3C/svg%3E";
         };
     }
 
-    // 点击图片打开大图（新标签页，方便保存）
-    function openFullImage() {
+    // 弹窗显示大图
+    function showImageModal() {
         if (currentPrizeUrl) {
-            window.open(currentPrizeUrl, '_blank');
+            modalImg.src = currentPrizeUrl;
+            modal.style.display = 'flex';
         }
+    }
+
+    function closeImageModal() {
+        modal.style.display = 'none';
+        modalImg.src = ''; // 清空
     }
 
     async function scratchToReveal() {
         if (isScratched || isAnimating) return;
         if (prizeList.length === 0) {
-            // 如果没有奖品，尝试重新加载一次
             prizeList = await fetchAllPrizes();
             if (prizeList.length === 0) {
                 alert("未找到奖品图片，请确认 prize-images 文件夹中有 1.jpg, 2.jpg ... 等图片");
@@ -416,7 +600,6 @@
             coatingLayer.removeEventListener('animationend', onFadeEnd);
         };
         coatingLayer.addEventListener('animationend', onFadeEnd, { once: true });
-        // 后备定时器
         setTimeout(() => {
             if (isAnimating && !isScratched) {
                 if (coatingLayer.style.display !== 'none') coatingLayer.style.display = 'none';
@@ -440,34 +623,84 @@
         void coatingLayer.offsetHeight;
     }
 
-    // 绑定事件
+    // 生成漂浮爱心（动态背景）
+    function createFloatingHearts() {
+        const container = document.getElementById('floatingHearts');
+        const heartCount = 28;
+        for (let i = 0; i < heartCount; i++) {
+            const heart = document.createElement('div');
+            heart.classList.add('float-heart');
+            heart.innerHTML = '<i class="fas fa-heart"></i>';
+            const size = 12 + Math.random() * 28;
+            heart.style.fontSize = size + 'px';
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.animationDuration = 8 + Math.random() * 12 + 's';
+            heart.style.animationDelay = Math.random() * 15 + 's';
+            heart.style.opacity = 0.3 + Math.random() * 0.5;
+            container.appendChild(heart);
+        }
+    }
+
+    // 增加点击粒子效果（刮开或点击时产生爱心小粒子）
+    function createBurstEffect(x, y) {
+        const burstContainer = document.createElement('div');
+        burstContainer.style.position = 'fixed';
+        burstContainer.style.top = '0';
+        burstContainer.style.left = '0';
+        burstContainer.style.width = '100%';
+        burstContainer.style.height = '100%';
+        burstContainer.style.pointerEvents = 'none';
+        burstContainer.style.zIndex = '999';
+        document.body.appendChild(burstContainer);
+        
+        for (let i = 0; i < 12; i++) {
+            const particle = document.createElement('div');
+            particle.innerHTML = '<i class="fas fa-heart"></i>';
+            particle.style.position = 'absolute';
+            particle.style.left = (x - 10 + Math.random() * 20) + 'px';
+            particle.style.top = (y - 10 + Math.random() * 20) + 'px';
+            particle.style.color = `hsl(${340 + Math.random() * 30}, 80%, 65%)`;
+            particle.style.fontSize = (12 + Math.random() * 20) + 'px';
+            particle.style.opacity = '1';
+            particle.style.transition = 'all 1s ease-out';
+            particle.style.pointerEvents = 'none';
+            burstContainer.appendChild(particle);
+            
+            const tx = (Math.random() - 0.5) * 100;
+            const ty = -80 - Math.random() * 100;
+            setTimeout(() => {
+                particle.style.transform = `translate(${tx}px, ${ty}px)`;
+                particle.style.opacity = '0';
+            }, 10);
+        }
+        setTimeout(() => {
+            burstContainer.remove();
+        }, 1200);
+    }
+
+    // 监听涂层点击产生粒子效果
+    coatingLayer.addEventListener('click', (e) => {
+        const rect = coatingLayer.getBoundingClientRect();
+        const x = rect.left + rect.width / 2;
+        const y = rect.top + rect.height / 2;
+        createBurstEffect(x, y);
+    });
+
+    // 图片点击弹窗
+    prizeImgWrapper.addEventListener('click', showImageModal);
+    closeModal.addEventListener('click', closeImageModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeImageModal();
+    });
+
     async function init() {
         prizeList = await fetchAllPrizes();
         console.log(`🎁 共加载 ${prizeList.length} 个奖品`, prizeList);
         coatingLayer.addEventListener('click', scratchToReveal);
         resetBtn.addEventListener('click', resetGame);
-        prizeImgWrapper.addEventListener('click', openFullImage);
+        createFloatingHearts();
     }
     init();
-
-    // 背景粒子效果（保留）
-    function createParticles() {
-        const container = document.getElementById('particles');
-        for (let i = 0; i < 45; i++) {
-            const p = document.createElement('div');
-            p.classList.add('particle');
-            const s = 3 + Math.random() * 12;
-            p.style.width = s + 'px';
-            p.style.height = s + 'px';
-            p.style.left = Math.random() * 100 + '%';
-            p.style.top = Math.random() * 100 + '%';
-            p.style.animationDelay = Math.random() * 15 + 's';
-            p.style.animationDuration = 8 + Math.random() * 12 + 's';
-            p.style.opacity = 0.2 + Math.random() * 0.4;
-            container.appendChild(p);
-        }
-    }
-    createParticles();
 </script>
 </body>
 </html>
